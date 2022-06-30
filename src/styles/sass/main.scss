@@ -1,0 +1,415 @@
+@import url('https://fonts.googleapis.com/css2?family=Anek+Latin:wght@400;500;600;700&display=swap');
+@import './mixins';
+
+
+body, html {
+    @include reset-params;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+    height: 100vh;
+    font-family: 'Anek Latin', sans-serif;
+    color: #eee4ff;
+}
+
+button, input {
+    outline: none;
+    border: none;
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+#root {
+    @include flex-center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.App {
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+}
+
+.landing-page {
+    position: relative;
+    height: 100%;
+    background-image: linear-gradient(to bottom, #eee4ff 30%, #532cdf, 30%, #532cdf 100%);
+    width: 100%;
+    padding: 15px;
+    @include flex-col;
+
+    .quiz-img {
+        max-width: 280px;
+        @include mq(700px) {
+            max-width: 230px;
+        }
+
+        transform: translateX(10px);
+    }
+
+    .flex-grow {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 60px;
+    }
+
+    .welcome-text {
+    font-size: 1.8rem;
+    text-shadow: 0 0 2px rgba($color: #000000, $alpha: 1.0);
+
+    .emoji {
+        display: inline-block;
+        transform: rotate(-40deg);
+    }
+
+    .taki-quiz {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    }
+
+    .name-form-wrapper {
+        font-size: 1.5rem ;
+        .name-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            input {
+                width: 100%;
+                padding: 15px 20px;
+                border-radius: 12px;
+                caret-color: #532cdf;
+
+                &::placeholder {
+                    font-size: 1rem; 
+                    color: #532cdf;
+                    font-size: medium;
+                }
+
+            }
+
+            .start-btn {
+                width: 100%;
+                padding: 15px 20px;
+                color: #eee4ff;
+                background-color: #331d81c7;
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+
+                &:hover {
+                    background-color: #331d81;
+                }
+            }
+
+            
+        }
+
+    }
+    .taki-footer {
+        width: 100%;
+        font-size: 1.3rem;
+        opacity: .7;
+        @include mq(700px) {
+        }
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+    .skip {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: transparent;
+        border-radius: 10px;
+        color: #331d81;
+        font-weight: bold;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+.qst-type {
+    @include full-size;
+    background-image: linear-gradient(to bottom, #6a45f0, #532cdf);
+    color: white;
+    @include flex-col;
+
+    .welcome-text-name {
+        font-size: 2.2rem;
+        margin-top: 60px;
+        padding: 0 20px;
+    }
+
+
+    .qst {
+        font-size: 2.4rem;
+        margin: 20px;
+        padding: 0 20px;
+        font-weight: bold;
+    }
+
+    .categories {
+        color: #000000;
+        background-color: #eee4ff;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        list-style: none;
+        gap: 20px;
+        flex: 1;
+        padding: 20px;
+        border-radius: 30px 30px 0 0;
+
+        .cat-li {
+            background-color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            transition: all 250ms;
+            cursor: pointer;
+
+            &:hover {
+                box-shadow: 0 0 10px #532cdf7a;
+            }
+
+            .icons {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+
+                .type-icon {
+                    width: 50px;
+                }
+
+                .start-type {
+                    background-color: transparent;
+                    width: fit-content;
+                    padding: 10px;
+                    
+                    .play-circle {
+                        width: 30px;
+                        height: 30px;
+                        cursor: pointer;
+                    }
+                }
+
+            }
+            
+            .cat-name {
+                font-size: 1.2rem;
+            }
+        }
+    }
+
+}
+
+.loading-page {
+    @include full-size;
+    color: #eee4ff;
+    background-image: linear-gradient(to bottom, #6a45f0, #532cdf);
+    padding: 20px;
+    font-size: 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .progress {
+        background-color: #331d81;
+        padding: 7px;
+        margin-top: 20px;
+        position: relative;
+
+        span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background-color: #eee4ff;
+            transition: width 800ms;
+        }
+
+        span.start {
+            width: 100%;
+        }
+
+    }
+}
+
+.qst-page {
+    display: flex;
+    flex-direction: column;
+    @include full-size;
+    background-color: #eee4ff;
+    padding: 20px 15px;
+    color: #331d81;
+
+    .header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+
+        .type {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+    }
+
+    .time-number {
+        .number {
+            font-size: 1.4rem;
+        }
+
+        .time-bar {
+            background-color: #d1d1d1;
+            width: 100%;
+            padding: 6px;
+            margin: 20px 0;
+            position: relative;
+            border-radius: 10px;
+
+            span {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                background-color: #331d81;
+                border-radius: inherit;
+                
+
+            }
+            
+            .start-time {
+                animation: width 10s linear;
+                animation-iteration-count: infinite;
+            }
+
+            @keyframes width {
+                to {
+                    width: 100%;
+                }
+            }
+            
+        }
+
+    }
+
+    .qsts {
+        .question {
+            margin: 20px 0;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .answers {
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 12px;
+            border: 2px solid #6a45f0;
+
+             form {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .box {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 1.3rem;
+
+                    input {
+                        width: 20px;
+                        height: 20px;
+                        cursor: pointer;
+                    }
+                }
+             }
+            
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .correct, .wrong {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 1.3rem;
+            img {
+                margin-right: 10px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .correct {
+            color: rgb(0, 199, 60);
+        }
+
+        .wrong {
+            color: rgb(255, 39, 10);
+        }
+    }
+
+    .quote {
+        flex: 1;
+        display: flex;
+        margin: 20px 0;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        font-size: 1.4rem;
+
+        .text {
+            color: #000000;
+            text-align: center;
+        }
+
+        .author {
+            text-transform: capitalize;
+            color: #00000073;
+            font-weight: 400;
+        }
+    }
+}
+

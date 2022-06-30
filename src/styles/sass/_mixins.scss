@@ -1,0 +1,36 @@
+@mixin reset-params {
+    margin: 0;
+    padding: 0;
+}
+
+@mixin reset-list {
+    @include reset-params;
+    list-style: none;
+}
+
+@mixin flex {
+    display: flex;
+}
+
+@mixin flex-col {
+    @include flex;
+    flex-direction: column;
+}
+
+@mixin flex-center {
+    @include flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin  mq($size) {
+    @media screen and (max-height: $size) {
+        @content
+    }
+}
+
+@mixin  full-size {
+   width: 100%;
+   height: 100%;
+}
+
