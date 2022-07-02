@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react'
 import axios from 'axios'
 import { useData } from '../contexts/QuestionsContext'
 
@@ -58,7 +58,7 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
     resetAll('label', 'red')
     resetAll('span', 'checked')
     setHandleCheckTO(setTimeout((e) => handleCheck(e), 10000))
-    setNextQst(setTimeout(() => setCurrent(prev => prev + 1), 13000))
+    // setNextQst(setTimeout(() => setCurrent(prev => prev + 1), 13000))
   }
 
   const showMsg = (checked = null, correct) => {
@@ -96,20 +96,25 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
     }
 
     clearTimeout(nextQst)
-    setNextQst(setTimeout(() => setCurrent(prev => prev < 10 ? prev + 1 : prev), 3000))
+    setNextQst(setTimeout(() => setCurrent(prev => prev + 1), 3000))
 
     handleCorrection()
   }
 
   useEffect(() => { 
-    if(current >= 11) setIsReady(false)
+    if(current >= 11) {
+      setIsReady(false)
+      return;
+    }
+
     handleTimeBar()
     loadNextQuestion()
   }, [current, setCurrent])
 
-
   return (
-    <div className='qst-page'>
+     <div className='qst-page'>
+        {current <= 10 && 
+          <>
         <header className='header'>
           <p className='type'>{selectedType}</p>
         </header>
@@ -125,7 +130,7 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
 
         <div className='qsts'>
           <h3 className='question'>
-            Q{current}. {questions[current - 1].qst ?? 'Something wrong in index ' + current} ?
+            Q{current}. {questions[current - 1].qst || 'Something wrong in index ' + current} ?
           </h3>
 
           <div className='answers'>
@@ -134,7 +139,6 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
                 <div 
                 key={index}
                 className='box'
-
                 >
                   <span 
                   className='checkmark'
@@ -161,6 +165,8 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
               <p className='text'>"{quote.text}"</p>
               <p className='author'>{quote.author ?? 'Unknown authorgit'}</p>
             </div>
+            </>  
+            }
     </div>
   )
 }
