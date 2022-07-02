@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import LandingPage from "./pages/LandingPage";
 import Loading from './pages/Loading';
 import Qsts from './pages/Qsts';
+import Score from './pages/Score';
 import TypeQst from './pages/TypeQst'
 
 
@@ -25,9 +26,10 @@ function App() {
   return (
     <main className="App">
         { !name && <LandingPage playerName={name} onChangeName={value => setName(value)}/> }
-        { name && !isLoading && !type && <TypeQst playerName={name} selectType={selectType} /> }
+        { name && !isLoading && !type && <TypeQst playerName={name} selectType={selectType}  /> }
         {name && isLoading && type && <Loading playerName={name} selectedType={type} setIsLoading={setIsLoading} />}
-        { name && !isLoading && isReady && type && <Qsts selectedType={type} setScore={setScore} />}
+        { name && !isLoading && isReady && type && <Qsts selectedType={type} setScore={setScore} setIsReady={setIsReady} />}
+        {name && type && !isReady && !isLoading && <Score type={type} name={name} score={score} setType={setType} setIsLoading={setIsLoading} />}
     </main>
   );
 }

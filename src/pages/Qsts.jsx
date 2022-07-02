@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { useData } from '../contexts/QuestionsContext'
 
@@ -6,59 +6,112 @@ let quotes = []
 const getRandomQuote = async () => {
   const response = await axios.get('https://type.fit/api/quotes')
   quotes = response.data.slice(0, 100)
-  console.log(quotes)
 }
 
 getRandomQuote()
+//create a function that set a 13secs to load the next question
+//a 10 secs for the answer and three secs for showing the correct answer
+//when we answer => we wait 3 secs to load the next question
+//if we don't answer and the 10 secs complete => we disable the radios and show the correct answer other wise when we click on radio buttons we show the correct answer and color it by green and color rd for the wrong answer
+//when we load the 10th question, the next page after 13 secs should be the score page
+//create a function that waits 13secs for each qst and load the next and when we submit the answer we call this function
+//create a function that colors the wrong answer with red and the correct one with green when we submit => answered is true and if not answered only the correct answer colors by green and show message that you must answer the question
+//create function that reset the radios and disable them every each answer 
+//create a function that enable radios on each load
+//create a function that shows correct or wrong or msg
 
 
 
-const Qsts = ({ selectedType, setScore }) => {
+const Qsts = ({ selectedType, setScore, setIsReady }) => {
   const timeRef = useRef()
   const correctRef = useRef()
   const wrongRef = useRef()
   const formRef = useRef()
   const questions = useData()[selectedType.toLowerCase()]
   const [current, setCurrent] = useState(1)
-  const [timeOut, setTimeOut] = useState(undefined)
-  const [quote, setQuote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
-  useEffect(() => {
-    console.log(`new qst`)
-    timeRef.current.classList.remove('start-time');
-    setTimeout(() => timeRef.current.classList.add('start-time'), 10);
-    setTimeOut(setTimeout(() => setCurrent(prev => prev !== 10 ? prev + 1 : prev), 10000))
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)])
-  }, [current, setCurrent])
+  const [quote, ] = useState(quotes[Math.floor(Math.random() * quotes.length)])
+  const [nextQst, setNextQst] = useState(undefined)
+  const [startTimeBar, setStartTimeBar] = useState(undefined)
+  const [fullTimeBar, setFullTimeBar] = useState(undefined)
+  const [handleCheckTO, setHandleCheckTO] = useState(undefined)
 
-  const toggleAttribute = () => {
-    [...formRef.current.querySelectorAll('input')].forEach(input =>
-      input.hasAttribute('disabled') ? input.removeAttribute('disabled') : input.setAttribute('disabled', ''))
+
+  const resetAll = (selector, className) => {
+    [...document.querySelectorAll(selector)].forEach(label => label.classList.remove(className))
+    wrongRef.current.classList.add('hide')
+    correctRef.current.classList.add('hide')
   }
 
-  useEffect(() => toggleAttribute(), [current])
-  
-  const handleAnswer = (e, correct) => {
-    if(e.target.value === correct) {
-      correctRef.current.classList.remove('hide')
-      setScore(prevScore => prevScore + 1)
-      setTimeout(() => correctRef.current.classList.add('hide'), 2000)
-    } else {
+  const handleTimeBar = () => {
+    clearTimeout(startTimeBar)
+    clearTimeout(fullTimeBar)
+    const timeBar = document.querySelector('.time-bar span')
+    timeBar.classList.remove('start-time')
+    timeBar.classList.remove('full-time')
+    setStartTimeBar(setTimeout(() => timeBar.classList.add('start-time'), 10))
+    setFullTimeBar(setTimeout(() => timeBar.classList.add('full-time'), 10000))
+  }
+  const loadNextQuestion = () => {
+    clearTimeout(nextQst)
+    clearTimeout(handleCheckTO)
+    resetAll('label', 'green')
+    resetAll('label', 'red')
+    resetAll('span', 'checked')
+    setHandleCheckTO(setTimeout((e) => handleCheck(e), 10000))
+    setNextQst(setTimeout(() => setCurrent(prev => prev + 1), 13000))
+  }
+
+  const showMsg = (checked = null, correct) => {
+    [correctRef.current, wrongRef.current].forEach(item => !item.classList.contains('hide') ? item.classList.add('hide') : '' )
+
+    if(!checked) {
       wrongRef.current.classList.remove('hide')
-      setTimeout(() => wrongRef.current.classList.add('hide'), 2000)
+      return;
     }
 
-    clearTimeout(timeOut)
-    setTimeout(() => setCurrent(prev => prev !== 10 ? prev + 1 : prev), 2500)
-
-    toggleAttribute()
+    if(checked.textContent === correct) {
+      correctRef.current.classList.remove('hide')
+      setScore(prev => prev + 1)
+    } else {
+      wrongRef.current.classList.remove('hide')
+    }
   }
+
+  const handleCorrection = (correct = questions[current - 1].correct) => {
+    const correctLabel = [...document.querySelectorAll('label')].filter(label => label.textContent === correct)[0]
+    const checked = document.querySelector('.checked + label') || null
+
+    correctLabel.classList.add('green')
+    if(checked) checked.classList.add(checked.textContent === correct ? 'green' : 'red')
+
+
+    showMsg(checked, correct)
+  }
+
+  
+  const handleCheck = (e) => {
+    if(e && e.target) {
+      [...document.querySelectorAll('.checkmark')].forEach(checkmark => checkmark.classList.remove('checked'))
+      e.target.classList.add('checked')
+    }
+
+    clearTimeout(nextQst)
+    setNextQst(setTimeout(() => setCurrent(prev => prev < 10 ? prev + 1 : prev), 3000))
+
+    handleCorrection()
+  }
+
+  useEffect(() => { 
+    if(current >= 11) setIsReady(false)
+    handleTimeBar()
+    loadNextQuestion()
+  }, [current, setCurrent])
+
 
   return (
     <div className='qst-page'>
         <header className='header'>
-          <button>{'<'}</button>
           <p className='type'>{selectedType}</p>
-          <button>Sound</button>
         </header>
 
         <div className='time-number'>
@@ -66,13 +119,13 @@ const Qsts = ({ selectedType, setScore }) => {
             <p>{current}/10</p>
           </div>
           <div className='time-bar'>
-            <span className='start-time' ref={timeRef}></span>
+            <span className='' ref={timeRef}></span>
           </div>
         </div>
 
         <div className='qsts'>
           <h3 className='question'>
-            Q{current}. {questions[current - 1].qst} ?
+            Q{current}. {questions[current - 1].qst ?? 'Something wrong in index ' + current} ?
           </h3>
 
           <div className='answers'>
@@ -83,16 +136,14 @@ const Qsts = ({ selectedType, setScore }) => {
                 className='box'
 
                 >
-                  <input 
-                  type="radio" 
-                  name='answers' 
-                  id={index}
-                  value={answer}
-                  onChange={(e) => handleAnswer(e, questions[current - 1].correct)}
-                  disabled
-                  />
-
-                  <label htmlFor={`${index}`}>{answer}</label>
+                  <span 
+                  className='checkmark'
+                  onClick={handleCheck}
+                  >
+                  </span>
+                  <label 
+                  htmlFor={`${index}`}
+                  >{answer}</label>
                 </div>
               ))}
             </form>
@@ -108,7 +159,7 @@ const Qsts = ({ selectedType, setScore }) => {
         </div>
             <div className='quote'>
               <p className='text'>"{quote.text}"</p>
-              <p className='author'>{quote.author ?? 'Unknown author'}</p>
+              <p className='author'>{quote.author ?? 'Unknown authorgit'}</p>
             </div>
     </div>
   )

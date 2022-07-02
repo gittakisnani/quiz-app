@@ -278,7 +278,7 @@ button, input {
     .header {
         margin-bottom: 30px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         
 
@@ -310,13 +310,15 @@ button, input {
                 width: 0;
                 background-color: #331d81;
                 border-radius: inherit;
-                
 
             }
             
             .start-time {
                 animation: width 10s linear;
-                animation-iteration-count: infinite;
+            }
+
+            .full-time {
+                width: 100%;
             }
 
             @keyframes width {
@@ -353,10 +355,36 @@ button, input {
                     gap: 10px;
                     font-size: 1.3rem;
 
-                    input {
-                        width: 20px;
-                        height: 20px;
+                    .checkmark {
+                        width: 25px;
+                        height: 25px;
+                        border: 1px solid #331d81;
                         cursor: pointer;
+                        border-radius: 50%;
+                        transition: all 250ms;
+                        position: relative;
+
+                        &.checked {
+                            &::after {
+                                position: absolute;
+                                left: 50%;
+                                top: 50%;
+                                transform: translate(-50%, -50%);
+                                width: 15px;
+                                height: 15px;
+                                border-radius: inherit;
+                                background-color: #331d81;
+                                content: '';
+                            }
+                        }
+                    }
+
+                    .green {
+                        color: green;
+                    }
+
+                    .red {
+                        color: red;
                     }
                 }
              }
@@ -413,3 +441,35 @@ button, input {
     }
 }
 
+.score-page {
+    @include full-size;
+    background-image: linear-gradient(to bottom, #6a45f0, #532cdf);
+    color: white;
+    @include flex-col;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    padding: 20px;
+    text-align: center;
+    line-height: 1.4;
+
+    span {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .restart {
+        color: white;
+        background-color: #6a45f0;
+        text-align: center;
+        padding: 20px;
+        margin-top: 40px;
+        font-size: 1.2rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #331d81;
+        }
+    }
+}
