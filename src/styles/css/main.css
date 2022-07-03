@@ -328,6 +328,9 @@ button, input {
   background-color: #331d81;
   content: "";
 }
+.qst-page .qsts .answers form .box .checkmark.disabled {
+  pointer-events: none;
+}
 .qst-page .qsts .answers form .box .green {
   color: green;
 }

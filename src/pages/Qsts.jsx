@@ -57,8 +57,8 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
     resetAll('label', 'green')
     resetAll('label', 'red')
     resetAll('span', 'checked')
+    resetAll('span', 'disabled')
     setHandleCheckTO(setTimeout((e) => handleCheck(e), 10000))
-    // setNextQst(setTimeout(() => setCurrent(prev => prev + 1), 13000))
   }
 
   const showMsg = (checked = null, correct) => {
@@ -91,7 +91,9 @@ const Qsts = ({ selectedType, setScore, setIsReady }) => {
   
   const handleCheck = (e) => {
     if(e && e.target) {
-      [...document.querySelectorAll('.checkmark')].forEach(checkmark => checkmark.classList.remove('checked'))
+      [...document.querySelectorAll('.checkmark')].forEach(checkmark => checkmark.classList.remove('checked'));
+      [...document.querySelectorAll('.checkmark')].forEach(checkmark => checkmark.classList.add('disabled'));
+      e.target.classList.remove('disabled')
       e.target.classList.add('checked')
     }
 

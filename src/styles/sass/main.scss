@@ -377,6 +377,10 @@ button, input {
                                 content: '';
                             }
                         }
+
+                        &.disabled {
+                            pointer-events: none;
+                        }
                     }
 
                     .green {
